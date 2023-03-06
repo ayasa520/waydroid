@@ -45,6 +45,7 @@ defaults["rootfs"] = defaults["work"] + "/rootfs"
 defaults["overlay"] = defaults["work"] + "/overlay"
 defaults["overlay_rw"] = defaults["work"] + "/overlay_rw"
 defaults["overlay_work"] = defaults["work"] + "/overlay_work"
+# defaults["overlay_modules"] = defaults["work"] + "/overlay_modules"
 defaults["data"] = defaults["work"] + "/data"
 defaults["lxc"] = defaults["work"] + "/lxc"
 defaults["host_perms"] = defaults["work"] + "/host-permissions"
@@ -66,6 +67,7 @@ session_defaults = {
 session_defaults["config_path"] = defaults["work"] + "/session.cfg"
 session_defaults["waydroid_data"] = session_defaults["xdg_data_home"] + \
     "/waydroid/data"
+session_defaults["modules"] = session_defaults["waydroid_data"] + "/adb/overlay_modules"
 if session_defaults["pulse_runtime_path"] == "None":
     session_defaults["pulse_runtime_path"] = session_defaults["xdg_runtime_dir"] + "/pulse"
 

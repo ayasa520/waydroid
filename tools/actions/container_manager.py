@@ -169,6 +169,9 @@ def do_start(args, session):
             helpers.mount.bind(args, session["waydroid_data"],
                                tools.config.defaults["data"])
 
+
+    helpers.modules.create_modules_dir(session["modules"])
+    helpers.modules.prepare_modules(session["modules"])
     # Mount rootfs
     cfg = tools.config.load(args)
     helpers.images.mount_rootfs(args, cfg["waydroid"]["images_path"], session)

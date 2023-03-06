@@ -133,6 +133,7 @@ def init(args):
             os.mkdir(tools.config.defaults["overlay_rw"])
             os.mkdir(tools.config.defaults["overlay_rw"]+"/system")
             os.mkdir(tools.config.defaults["overlay_rw"]+"/vendor")
+            os.mkdir(tools.config.defaults["overlay_rw"]+"/rootfs")
         helpers.drivers.probeAshmemDriver(args)
         helpers.lxc.setup_host_perms(args)
         helpers.lxc.set_lxc_config(args)

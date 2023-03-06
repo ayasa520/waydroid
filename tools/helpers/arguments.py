@@ -88,6 +88,14 @@ def arguments_app(subparser):
     sub.add_parser("list", help="list installed applications")
     return ret
 
+def arguments_module(subparser):
+    ret = subparser.add_parser("module", help="modules controller")
+    sub = ret.add_subparsers(title="subaction", dest="subaction")
+    install = sub.add_parser(
+        "install", help="push a single module to the container and install it")
+    install.add_argument('MODULE', help="path to apk file")
+    return ret
+
 def arguments_prop(subparser):
     ret = subparser.add_parser("prop", help="android properties controller")
     sub = ret.add_subparsers(title="subaction", dest="subaction")
@@ -111,6 +119,7 @@ def arguments_firstLaunch(subparser):
 def arguments_shell(subparser):
     ret = subparser.add_parser("shell", help="run remote shell command")
     ret.add_argument('COMMAND', nargs='*', help="command to run")
+    ret.add_argument("-c", "--command_string", action="store_true", help="read the command in the string and run")
     return ret
 
 def arguments_logcat(subparser):
@@ -149,6 +158,7 @@ def arguments():
     arguments_session(sub)
     arguments_container(sub)
     arguments_app(sub)
+    arguments_module(sub)
     arguments_prop(sub)
     arguments_fullUI(sub)
     arguments_firstLaunch(sub)

@@ -108,6 +108,10 @@ def main():
             else:
                 logging.info(
                     "Run waydroid {} -h for usage information.".format(args.action))
+        elif args.action == "module":
+            actionNeedRoot(args.action)
+            if args.subaction == "install":
+                actions.module_manager.install(args)
         elif args.action == "prop":
             if args.subaction == "get":
                 actions.prop.get(args)

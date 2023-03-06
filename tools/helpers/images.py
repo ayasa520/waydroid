@@ -7,6 +7,7 @@ import hashlib
 import shutil
 import os
 import tools.config
+import tools.helpers.modules
 from tools import helpers
 from shutil import which
 
@@ -105,6 +106,7 @@ def remove_overlay(args):
         shutil.rmtree(tools.config.defaults["overlay_work"])
 
 def make_prop(args, cfg, full_props_path):
+    config = tools.config.load(args)
     if not os.path.isfile(args.work + "/waydroid_base.prop"):
         raise RuntimeError("waydroid_base.prop Not found")
     with open(args.work + "/waydroid_base.prop") as f:
@@ -132,6 +134,9 @@ def make_prop(args, cfg, full_props_path):
     if dpi != "0":
         props.append("ro.sf.lcd_density=" + dpi)
 
+    if config["waydroid"]["mount_overlays"] == "True":
+        props.extend(tools.helpers.modules.get_system_props(cfg["modules"]+"/modules"))
+
     final_props = open(full_props_path, "w")
     for prop in props:
         final_props.write(prop + "\n")
@@ -147,8 +152,17 @@ def mount_rootfs(args, images_dir, session):
             helpers.mount.mount_overlay(args, [tools.config.defaults["overlay"],
                                                tools.config.defaults["rootfs"]],
                                     tools.config.defaults["rootfs"],
+                                    upper_dir=tools.config.defaults["overlay_rw"] + "/rootfs",
+                                    work_dir=tools.config.defaults["overlay_work"] + "/rootfs")
+            
+            helpers.mount.mount_overlay(args, [tools.config.defaults["overlay"] + "/system",
+                                              *tools.helpers.modules.collect_modules(session["modules"], "system"),
+                                               tools.config.defaults["rootfs"] + "/system"],
+                                    tools.config.defaults["rootfs"] +"/system",
                                     upper_dir=tools.config.defaults["overlay_rw"] + "/system",
                                     work_dir=tools.config.defaults["overlay_work"] + "/system")
+
+            # helpers.mount.bind(args, tools.config.defaults["overlay_modules"], session["modules"])
         except RuntimeError:
             cfg["waydroid"]["mount_overlays"] = "False"
             tools.config.save(args, cfg)
@@ -158,6 +172,7 @@ def mount_rootfs(args, images_dir, session):
                            tools.config.defaults["rootfs"] + "/vendor")
     if cfg["waydroid"]["mount_overlays"] == "True":
         helpers.mount.mount_overlay(args, [tools.config.defaults["overlay"] + "/vendor",
+                                           *tools.helpers.modules.collect_modules(session["modules"], "vendor"),
                                            tools.config.defaults["rootfs"] + "/vendor"],
                                     tools.config.defaults["rootfs"] + "/vendor",
                                     upper_dir=tools.config.defaults["overlay_rw"] + "/vendor",
@@ -181,3 +196,4 @@ def mount_rootfs(args, images_dir, session):
 
 def umount_rootfs(args):
     helpers.mount.umount_all(args, tools.config.defaults["rootfs"])
+    helpers.mount.umount_all(args, tools.config.session_defaults["modules"])

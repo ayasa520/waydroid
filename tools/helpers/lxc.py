@@ -439,8 +439,13 @@ def shell(args):
                "-n", "waydroid", "--clear-env"]
     command.extend(android_env_attach_options())
     command.append("--")
+    if args.command_string:
+        command.extend(["/system/bin/sh", "-c"])
     if args.COMMAND:
-        command.extend(args.COMMAND)
+        if not args.command_string:
+            command.extend(args.COMMAND)
+        else:
+            command.append(" ".join(args.COMMAND))
     else:
         command.append("/system/bin/sh")
     subprocess.run(command)
@@ -448,5 +453,6 @@ def shell(args):
         freeze(args)
 
 def logcat(args):
+    args.command_string=False
     args.COMMAND = ["/system/bin/logcat"]
     shell(args)
